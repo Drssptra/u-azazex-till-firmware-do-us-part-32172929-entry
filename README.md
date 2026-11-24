@@ -4,7 +4,7 @@
 [![rank](https://make.fun/badge/u-azazex-till-firmware-do-us-part-32172929/Drssptra/u-azazex-till-firmware-do-us-part-32172929-entry/rank.svg)](https://make.fun/bounty/u-azazex-till-firmware-do-us-part-32172929/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=u-azazex-till-firmware-do-us-part-32172929)
 [![reward](https://make.fun/badge/u-azazex-till-firmware-do-us-part-32172929/Drssptra/u-azazex-till-firmware-do-us-part-32172929-entry/reward.svg)](https://make.fun/bounty/u-azazex-till-firmware-do-us-part-32172929?utm_source=github&utm_medium=readme&utm_campaign=u-azazex-till-firmware-do-us-part-32172929)
 
-A one-sentence wedding vow spoken by a robot at its own wedding: it promises love through every firmware update, every low battery, and every reboot, because its partner is the only program it never wants to close — a machine's joke wrapped around a real promise, in 141 characters.
+A one-sentence wedding vow spoken by a robot at its own wedding: it promises love through every update, every system crash, and every low battery, because its partner is the one process it will never kill — not even for a reboot — a machine's joke wrapped around a real promise, in 157 characters.
 
 ## Run it
 
