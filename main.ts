@@ -1,32 +1,68 @@
-// Till Firmware Do Us Part — a robot's wedding vow, revised.
+// Till Firmware Do Us Part — robot wedding vow, v2 resubmit.
 //
-// The vow is a single sentence a machine speaks at its own wedding: it
-// leans on the robot's own vocabulary (updates, crashes, battery,
-// processes) and lands the joke on a promise that is also tender —
-// the one thing it will never shut down is its partner. The program is
-// fully deterministic: every run writes and prints exactly the same
-// line to $MAKEFUN_OUTPUT_DIR/entry.txt (default /output/entry.txt)
-// with no trailing newline, and the same text goes to stdout with
-// nothing else, so the file and the console always agree. A guard
-// (MAX_VOW_LENGTH) refuses to write anything outside the gate's
-// 1–200 character window, so an over-long vow fails loudly instead
-// of silently shipping an invalid entry.
+// The vow is assembled from spoken phrases instead of stored as one
+// literal block: a machine that may lose its own name still holds on
+// to a single memory — its partner's name. Each phrase is a separate
+// breath in the ceremony; joining them in order reproduces the exact
+// vow, nothing more. The program is deterministic and offline: it
+// always produces the same single-line entry, validates it against
+// the 1–200 character gate, and writes it with no trailing newline.
 
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
-const vow =
-  "I vow to love you through every update, every system crash, and every low battery, because you are the one process I will never kill — not even for a reboot.";
+const PHRASES: readonly string[] = [
+  "I take you as my forever co-pilot,",
+  "and I promise that even if I glitch,",
+  "freeze, and forget my own name,",
+  "I will still remember yours.",
+];
 
-const MAX_VOW_LENGTH = 200;
+const GATE_MIN = 1;
+const GATE_MAX = 200;
 
-if (vow.length < 1 || vow.length > MAX_VOW_LENGTH) {
-  throw new Error(
-    `Vow must be 1–${MAX_VOW_LENGTH} characters, got ${vow.length}`,
-  );
+function assembleVow(phrases: readonly string[]): string {
+  return phrases.join(" ");
 }
 
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
-mkdirSync(outputDir, { recursive: true });
-writeFileSync(join(outputDir, "entry.txt"), vow, "utf8");
-process.stdout.write(vow);
+function checkVow(vow: string): void {
+  if (typeof vow !== "string") {
+    throw new TypeError("Vow must be a string");
+  }
+  const chars = [...vow].length;
+  if (chars < GATE_MIN || chars > GATE_MAX) {
+    throw new RangeError(
+      `Vow must be ${GATE_MIN}–${GATE_MAX} characters, got ${chars}`,
+    );
+  }
+  if (/[\r\n]/.test(vow)) {
+    throw new Error("Vow must be a single line");
+  }
+  if (Buffer.byteLength(vow, "utf8") !== chars) {
+    throw new Error("Vow must be plain ASCII text");
+  }
+}
+
+function resolveOutputDir(): string {
+  const fromEnv = process.env.MAKEFUN_OUTPUT_DIR?.trim();
+  return fromEnv !== undefined && fromEnv !== "" ? fromEnv : "/output";
+}
+
+function main(): void {
+  const vow = assembleVow(PHRASES);
+  checkVow(vow);
+
+  const dir = resolveOutputDir();
+  fs.mkdirSync(dir, { recursive: true });
+  const target = path.join(dir, "entry.txt");
+  fs.writeFileSync(target, Buffer.from(vow, "utf8"));
+
+  process.stdout.write(vow);
+}
+
+try {
+  main();
+} catch (error) {
+  process.stderr.write(`error: ${(error as Error).message}\n`);
+  process.exitCode = 1;
+}
